@@ -1,0 +1,11 @@
+.profile__wrapper {
+  display: flex;
+  align-items: baseline;
+  text-underline-offset: 5px;
+  margin: 0 0 0 30px;
+}
+@media (max-width: 600px){
+  .profile__wrapper {
+    justify-content: center;
+  }
+}

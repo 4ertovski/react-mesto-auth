@@ -1,0 +1,9 @@
+.element {
+  margin: 0;
+  width: 282px;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 12px;
+}

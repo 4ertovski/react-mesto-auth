@@ -1,0 +1,7 @@
+.element__wrapper {
+  margin: 25px 25px 0px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 15px;
+}

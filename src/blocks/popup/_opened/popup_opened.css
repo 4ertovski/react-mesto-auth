@@ -1,0 +1,8 @@
+.popup_opened {
+  
+  /* Убираем visibility: hidden и opacity: 0, чтобы попап был виден*/
+  /* Ставим pointer-events: all, чтобы можно было навестись на поле и выделить текст*/
+  visibility: visible;
+  opacity: 1;
+  pointer-events: all;
+}

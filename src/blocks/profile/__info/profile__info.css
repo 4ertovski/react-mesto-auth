@@ -1,0 +1,12 @@
+.profile__info {
+  margin-right: auto;
+  max-width: 45%;
+}
+@media (max-width: 600px) {
+  .profile__info {
+    margin-right: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    max-width: 100%;
+  }
+}

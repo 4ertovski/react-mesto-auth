@@ -1,0 +1,9 @@
+.popup__item-container {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  /*background-color: transparent;*/
+}

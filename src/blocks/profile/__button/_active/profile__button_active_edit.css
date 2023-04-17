@@ -1,0 +1,22 @@
+.profile__button_active_edit {
+  padding: 20px 0 0 0;
+  width: 24px;
+  height: 24px;
+  background-image: url('../../../../images/Edit_Button_profile.svg');
+  background-size: contain;
+  border: none;
+  display: flex;
+}
+@media (max-width: 800px) {
+  .profile__button_active_edit {
+    width: 20px;
+    height: 20px;
+  }
+}
+@media (max-width: 500px) {
+  .profile__button_active_edit {
+    width: 18px;
+    height: 18px;
+    padding: 15px 0 0 0;
+  }
+}
