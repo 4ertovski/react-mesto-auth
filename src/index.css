@@ -25,6 +25,11 @@ code {
 /*header*/
 @import url('./blocks/header/header.css');
 @import url('./blocks/header/__logo/header__logo.css');
+@import url('./blocks/header/__auth/header__auth.css');
+@import url('./blocks/header/__auth/header__auth-info.css');
+@import url('./blocks/header/__logout/header__logout.css');
+@import url('./blocks/header/__email/header__email.css');
+
 
 /*profile*/
 @import url('./blocks/profile/profile.css');
@@ -78,6 +83,7 @@ code {
 @import url('./blocks/popup/__form-field/popup__form-field.css');
 @import url('./blocks/popup/__input/_type/popup__input_type_error.css');
 @import url('./blocks/popup/__button/_disabled/popup__button_disabled.css');
+@import url('./blocks/popup/__signup-title/popup__signup-title.css');
 
 /*auth*/
 @import url('./blocks/auth/auth.css');
@@ -87,6 +93,9 @@ code {
 @import url('./blocks/auth/__input/auth__input.css');
 @import url('./blocks/auth/__link/auth__link.css');
 @import url('./blocks/auth/__title/auth__title.css');
+@import url('./blocks/auth/__form/__input-error/form__input-error.css');
+@import url('./blocks/auth/__form/__input-error/_active/form__input-error_active.css');
+
 
 
 

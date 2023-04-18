@@ -1,7 +1,7 @@
 import '../index.css';
 import api from "../utils/api";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import React, { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -14,7 +14,7 @@ import InfoTooltip from "./InfoTooltip";
 import Login from "./Login";
 import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
-import { useNavigate, Route, Routes } from "react-router-dom";
+import {useNavigate, Route, Routes ,Navigate} from "react-router-dom";
 import * as auth from '../utils/auth';
 
 
@@ -25,36 +25,104 @@ function App() {
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
     const [isDeleteCardPopupOpen, setIsDeleteCardPopupOpen] = useState(false);
     const [isInfoToolTipOpen, setIsInfoTooltipOpen] = useState(false);
-    
+
     const [cards, setCards] = useState([]);
     const [currentUser, setCurrentUser] = useState({});
     const [selectedCard, setSelectedCard] = useState({link: "", name: "", isOpen: false});
     const [selectedCardDelete, setSelectedCardDelete] = useState({});
 
+    //TODO utils
+    // const [dataIsLoaded, setDataIsLoaded] = useState(false);
+    // const [dataLoadingError, setDataLoadingError] = useState("");
+    // const [isLoading, setIsLoading] = useState(false);
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
+    const [error, setError] = useState(false);
     const [userEmail, setUserEmail] = useState('');
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
+    ////////TODO AUTH
 
-    React.useEffect(() => {
-        api.getInitialCards()
-            .then((cards) => {
+    useEffect(() => {
+        const cachedUser = localStorage.getItem("cachedUser");
+        if (cachedUser){
+            auth
+                .checkToken(cachedUser)
+                .then((res) => {
+                    if (res) {
+                        setIsLoggedIn(true);
+                        navigate("/");
+                        setUserEmail(res.data.email);
+                    }
+                })
+                .catch((error) => console.log(error));
+        }
+    }, [navigate]);
+
+    useEffect(() => {
+        isLoggedIn &&
+        Promise.all([api.getUserInfo(), api.getInitialCards()])
+            .then(([user, cards])=>{
+                setCurrentUser(user);
                 setCards(cards);
+                //TODO is loaded
             })
-            .catch(err => console.log(err));
-    }, []);
+            .catch((error) => {
+                //TODO loading error
+                console.log(error)
+            })
+    }, [isLoggedIn]);
 
-    React.useEffect(() => {
-        api.getUserInfo()
-            .then(data => {
-                setCurrentUser(data)})
-            .catch(err => console.log(err));
-    }, []);
+
+    const handleRegister = (values) =>{
+        if (!values.email || !values.password){
+            return;
+        }
+        auth
+            .register(values.email, values.password)
+            .then((res) => {
+                setError(false);
+                setIsInfoTooltipOpen((prev) => !prev);
+                navigate("/sign-in", { replace: true });
+            })
+            .catch((error) => {
+                setError(true);
+                setIsInfoTooltipOpen((prev) => !prev);
+                console.log(error);
+            })
+    }
+
+    const handleLogin = (values) => {
+        if (!values.email || !values.password){
+            return;
+        }
+        auth
+            .authorize(values.email, values.password)
+            .then((data) => {
+                if (data.token) {
+                    setIsLoggedIn(true);
+                    localStorage.setItem("cachedUser", data.token);
+                    setUserEmail(values.email);
+                    navigate("/")
+                }
+            })
+            .catch((Error) => {
+                setError(true);
+                setIsInfoTooltipOpen((prev) => !prev);
+                console.log(error);
+            })
+    }
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        setUserEmail("");
+        localStorage.removeItem("cachedUser");
+    };
+
+    ///////END AUTH
 
     function handleCardClick(card) {
-        setSelectedCard({link: card.link, name: card.name, isOpen: true});
+        setSelectedCard({link: card.link, name: card.name, isOpen: true}); //TODO test with card
     }
     function handleEditAvatarClick() {
         setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
@@ -74,7 +142,7 @@ function App() {
     }
 
     function handleCardLike(card) {
-        const isLiked = card.likes.some(i => i._id === currentUser._id);
+        const isLiked = card.likes.some((i) => i._id === currentUser._id);
 
         if (!isLiked) {
             api.putLike(card._id)
@@ -99,87 +167,116 @@ function App() {
                 const newCards = cards.filter((c) => c._id !== selectedCardDelete._id);
                 setCards(newCards);
                 setSelectedCardDelete({});
+            })
+            .then(() => {
                 closeAllPopups();
             })
             .catch(err => console.log(err));
     }
-        function handleUpdateUser(data) {
-            api.patchUserProfile(data)
-                .then(() => {
-                    setCurrentUser({...currentUser, ...data});
-                    closeAllPopups();
-                })
-                .catch(err => console.log(err));
-        }
+    function handleUpdateUser(data) {
+        //TODO is loading
+        api.patchUserProfile(data)
+            .then(() => {
+                setCurrentUser({...currentUser, ...data});
+                closeAllPopups();
+            })
+            .catch(err => console.log(err));
+        //TODO finally is loading
+    }
 
     function handleUpdateAvatar(data) {
+        //TODO is loading
         api.patchAvatar(data)
             .then(res => {
                 setCurrentUser(res);
+                closeAllPopups(); //TODO del?
             })
-            .then(() => {
-                setIsEditAvatarPopupOpen(false);
-            })
+            // .then(() => { TODO uncomment?
+            //     setIsEditAvatarPopupOpen(false);
+            // })
             .catch(err => console.log(err));
+        //TODO finally is loading
     }
 
-        function handleAddPlaceSubmit(card) {
-            api.postUserCard(card)
-                .then((newCard) => {
-                    setCards([newCard, ...cards]);
-                    closeAllPopups();
-                })
-                .catch(err => console.log(err));
-        }
+    function handleAddPlaceSubmit(card) {
+        //TODO is loading
+        api.postUserCard(card)
+            .then((newCard) => {
+                setCards([newCard, ...cards]);
+                closeAllPopups();
+            })
+            .catch(err => console.log(err));
+        //TODO finally is loading
+    }
     function closeAllPopups() {
         setIsEditProfilePopupOpen(false)
         setIsEditAvatarPopupOpen(false)
         setIsAddPlacePopupOpen(false)
         setIsDeleteCardPopupOpen(false)
         setSelectedCard({link: "", name: "", isOpen: false});
-    };
+        setIsInfoTooltipOpen(false);
+    }
 
 
-  return (
-      <CurrentUserContext.Provider value={currentUser}>
-    <div className="page">
-      <Header
-          />
-        <Main
-            onEditProfile={handleEditProfileClick}
-            onEditAvatar={handleEditAvatarClick}
-            onAddPlace={handleAddPlaceClick}
-            onCardClick={handleCardClick}
-            onCardLike = {handleCardLike}
-            onCardDelete = {handleDeleteCardClick}
-            cards = {cards}
-            />
-      <Footer />
-       <ImagePopup
-            name="img"
-            card={selectedCard}
-            onClose={closeAllPopups}/>
-        <AddPlacePopup
-            onAddPlace={handleAddPlaceSubmit}
-            onClose={closeAllPopups}
-            isOpen={isAddPlacePopupOpen}
-            />
-        <EditAvatarPopup
-            onUpdateAvatar={handleUpdateAvatar}
-            onClose={closeAllPopups}
-            isOpen={isEditAvatarPopupOpen}/>
-        <EditProfilePopup
-            onUpdateUser={handleUpdateUser}
-            onClose={closeAllPopups}
-            isOpen={isEditProfilePopupOpen}/>
-       <DeleteCardPopup
-            onClose={closeAllPopups}
-            isOpen={isDeleteCardPopupOpen}
-            onDeleteCard={handleCardDelete}/>
-
-    </div>
-      </CurrentUserContext.Provider>
-  );
+    return (
+        <div className="page">
+            <CurrentUserContext.Provider value={currentUser}>
+                <Header email={userEmail} onLogout={handleLogout}/>
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <ProtectedRoute
+                                element={Main}
+                                loggedIn={isLoggedIn}
+                                onEditProfile={handleEditProfileClick}
+                                onEditAvatar={handleEditAvatarClick}
+                                onAddPlace={handleAddPlaceClick}
+                                onCardClick={handleCardClick}
+                                onCardLike = {handleCardLike}
+                                onCardDelete = {handleDeleteCardClick}
+                                cards = {cards}/> //TODO add dataIsLoaded dataLoadingError
+                        }
+                    />
+                    <Route path="/sign-up" element={<Register onRegister={handleRegister}/>}/>
+                    <Route path="/sign-in" element={<Login
+                        onLogin={handleLogin}
+                        setError={setError}
+                        setIsInfoTooltipOpen={setIsInfoTooltipOpen}
+                        setUserEmail={setUserEmail}
+                    />}/>
+                    <Route path="*" element={<Navigate to="/"/>}/>
+                </Routes>
+             < Footer />
+                <ImagePopup
+                    name="img"
+                    card={selectedCard}
+                    onClose={closeAllPopups}/>
+                <AddPlacePopup
+                    onAddPlace={handleAddPlaceSubmit}
+                    onClose={closeAllPopups}
+                    isOpen={isAddPlacePopupOpen}
+                />
+                <EditAvatarPopup
+                    onUpdateAvatar={handleUpdateAvatar}
+                    onClose={closeAllPopups}
+                    isOpen={isEditAvatarPopupOpen}/>
+                <EditProfilePopup
+                    onUpdateUser={handleUpdateUser}
+                    onClose={closeAllPopups}
+                    isOpen={isEditProfilePopupOpen}/>
+                <DeleteCardPopup
+                    onClose={closeAllPopups}
+                    isOpen={isDeleteCardPopupOpen}
+                    onDeleteCard={handleCardDelete}/>
+                {/*    TODO add confirmation popup and infoToolptip*/}
+                <InfoTooltip
+                    isOpen={isInfoToolTipOpen}
+                    onClose={closeAllPopups}
+                    err={error}/>
+            </CurrentUserContext.Provider>
+        </div>
+    );
 }
 
 export default App;

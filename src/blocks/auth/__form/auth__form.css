@@ -1,4 +1,14 @@
 .auth__form {
     display: flex;
     flex-direction: column;
+    width: 358px;
+    color: #fff;
+    margin: 0 auto 200px;
+}
+
+@media screen and (max-width: 425px) {
+    .auth-form {
+        width: 260px;
+        margin-bottom: 50px;
+    }
 }

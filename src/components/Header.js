@@ -4,7 +4,7 @@ import {Link, Route, Routes} from "react-router-dom";
 function Header({onLogout, email}) {
     return (
         <header className='header'>
-                <img src={Mesto_header_logo} alt="логотип Место" className="header__logo" />
+            <img src={Mesto_header_logo} alt="логотип Место" className="header__logo" />
             <div className="header__auth-info">
                 {email && <p className="header__email">{email}</p>}
                 <Routes>

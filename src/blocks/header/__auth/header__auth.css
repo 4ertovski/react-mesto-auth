@@ -1,0 +1,10 @@
+.header__auth{
+    font-size: 18px;
+    line-height: 1.22;
+    color: #fff;
+    background-color: #000;
+    border: none;
+    margin-top: 51px;
+    transition: opacity 0.2s ease;
+    text-decoration: none;
+}
