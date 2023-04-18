@@ -32,9 +32,9 @@ function App() {
     const [selectedCardDelete, setSelectedCardDelete] = useState({});
 
     //TODO utils
-    // const [dataIsLoaded, setDataIsLoaded] = useState(false);
-    // const [dataLoadingError, setDataLoadingError] = useState("");
-    // const [isLoading, setIsLoading] = useState(false);
+    const [dataIsLoaded, setDataIsLoaded] = useState(false);
+    const [dataLoadingError, setDataLoadingError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [error, setError] = useState(false);
@@ -66,9 +66,11 @@ function App() {
                 setCurrentUser(user);
                 setCards(cards);
                 //TODO is loaded
+                setDataIsLoaded(true);
             })
             .catch((error) => {
                 //TODO loading error
+                setDataLoadingError(`Что-то пошло не так... (${error})`);
                 console.log(error)
             })
     }, [isLoggedIn]);
@@ -106,7 +108,7 @@ function App() {
                     navigate("/")
                 }
             })
-            .catch((Error) => {
+            .catch((error) => {
                 setError(true);
                 setIsInfoTooltipOpen((prev) => !prev);
                 console.log(error);
@@ -175,17 +177,22 @@ function App() {
     }
     function handleUpdateUser(data) {
         //TODO is loading
+        setIsLoading(true);
         api.patchUserProfile(data)
             .then(() => {
                 setCurrentUser({...currentUser, ...data});
                 closeAllPopups();
             })
-            .catch(err => console.log(err));
-        //TODO finally is loading
+            .catch(err => console.log(err))
+            //TODO finally is loading
+         .finally(() => {
+             setIsLoading(false);
+        });
     }
 
     function handleUpdateAvatar(data) {
         //TODO is loading
+        setIsLoading(true);
         api.patchAvatar(data)
             .then(res => {
                 setCurrentUser(res);
@@ -194,19 +201,22 @@ function App() {
             // .then(() => { TODO uncomment?
             //     setIsEditAvatarPopupOpen(false);
             // })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
         //TODO finally is loading
+    .finally(() => setIsLoading(false));
     }
 
     function handleAddPlaceSubmit(card) {
+        setIsLoading(true);
         //TODO is loading
         api.postUserCard(card)
             .then((newCard) => {
                 setCards([newCard, ...cards]);
                 closeAllPopups();
             })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
         //TODO finally is loading
+            .finally(() => setIsLoading(false));
     }
     function closeAllPopups() {
         setIsEditProfilePopupOpen(false)
@@ -235,7 +245,9 @@ function App() {
                                 onCardClick={handleCardClick}
                                 onCardLike = {handleCardLike}
                                 onCardDelete = {handleDeleteCardClick}
-                                cards = {cards}/> //TODO add dataIsLoaded dataLoadingError
+                                cards = {cards}
+                                dataIsLoaded={dataIsLoaded}
+                                dataLoadingError={dataLoadingError}/> //TODO add dataIsLoaded dataLoadingError
                         }
                     />
                     <Route path="/sign-up" element={<Register onRegister={handleRegister}/>}/>
@@ -256,24 +268,27 @@ function App() {
                     onAddPlace={handleAddPlaceSubmit}
                     onClose={closeAllPopups}
                     isOpen={isAddPlacePopupOpen}
+                    isLoading={isLoading}
                 />
                 <EditAvatarPopup
                     onUpdateAvatar={handleUpdateAvatar}
                     onClose={closeAllPopups}
-                    isOpen={isEditAvatarPopupOpen}/>
+                    isOpen={isEditAvatarPopupOpen}
+                    isLoading={isLoading}/>
                 <EditProfilePopup
                     onUpdateUser={handleUpdateUser}
                     onClose={closeAllPopups}
-                    isOpen={isEditProfilePopupOpen}/>
+                    isOpen={isEditProfilePopupOpen}
+                    isLoading={isLoading}/>
                 <DeleteCardPopup
                     onClose={closeAllPopups}
                     isOpen={isDeleteCardPopupOpen}
                     onDeleteCard={handleCardDelete}/>
-                {/*    TODO add confirmation popup and infoToolptip*/}
+                {/*    TODO add infoTooltip*/}
                 <InfoTooltip
                     isOpen={isInfoToolTipOpen}
                     onClose={closeAllPopups}
-                    err={error}/>
+                    error={error}/>
             </CurrentUserContext.Provider>
         </div>
     );

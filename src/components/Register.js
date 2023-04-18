@@ -1,5 +1,5 @@
 /*Register — компонент регистрации пользователя с необходимыми стейт-переменными.*/
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {useValidation} from "../hooks/ValidationHook";
 

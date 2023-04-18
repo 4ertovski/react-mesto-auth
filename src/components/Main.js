@@ -2,11 +2,16 @@
 import React from "react";
 import Card from './Card';
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import Loader from "./Loader";
 
-function Main({cards, onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike, onCardDelete}) {
+function Main({cards, onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike, onCardDelete, dataIsLoaded, dataLoadingError,}) {
     const currentUser = React.useContext(CurrentUserContext);
 
     return (
+        <>
+            {!dataIsLoaded ? (
+                <Loader error={dataLoadingError} />
+            ) : (
         <main className="main">
             <section className="profile">
                 <div className="profile__avatar-container" onClick={onEditAvatar}
@@ -41,7 +46,8 @@ function Main({cards, onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCa
                 ))}
             </section>
         </main>
-    );
-}
+            )}
+            </>
+                )}
 
 export default Main

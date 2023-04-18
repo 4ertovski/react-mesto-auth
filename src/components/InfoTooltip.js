@@ -11,7 +11,7 @@ function InfoTooltip({isOpen, onClose, error}){
                 <button className="popup__button popup__button_active_exit popup__close" type="button"
                         aria-label="Закрыть" value="close" onClick={onClose}/>
                 <img
-                    src={error ? successIcon : failIcon}
+                    src={error ?  failIcon : successIcon}
                     alt={
                         error ? 'Регистрация прошла успешно' : 'Регистрация не прошла'
                     }
@@ -19,11 +19,11 @@ function InfoTooltip({isOpen, onClose, error}){
                 />
                 <h2 className="popup__signup-title">
                     {error
-                        ? 'Вы успешно зарегистрировались!'
-                        : 'Что-то пошло не так! Попробуйте ещё раз.'}
+                        ? 'Что-то пошло не так! Попробуйте ещё раз.'
+                        : 'Вы успешно зарегистрировались!' }
                 </h2>
             </div>
         </div>
     );
-};
+}
 export default InfoTooltip;

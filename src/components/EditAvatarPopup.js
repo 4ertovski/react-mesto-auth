@@ -1,6 +1,6 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
-function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
+function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, isLoading }) {
     const avatarUrl = React.useRef();
 
    /*function handleChangeAvatar(e) {
@@ -23,6 +23,7 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
             button="Сохранить"
             isOpen = { isOpen }
             onClose = { onClose }
+            isLoading={isLoading}
             onSubmit = { handleSubmit }
            >
             <label className="popup__form-field">
