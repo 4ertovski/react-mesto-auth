@@ -1,5 +1,5 @@
 /*Login — компонент авторизации пользователя с необходимыми стейт-переменными.*/
-import React, { useState } from 'react';
+import React from 'react';
 import {useValidation} from "../hooks/ValidationHook";
 
 function Login({ onLogin }) {
