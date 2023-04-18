@@ -1,8 +1,8 @@
 
 // для валидации
-export const popupFormProfile = document.querySelector('.popup__form_profile');
+/*export const popupFormProfile = document.querySelector('.popup__form_profile');
 export const popupFormCard = document.querySelector('.popup__form_element');
-export const popupFormAvatar = document.querySelector('.popup__form_avatar')
+export const popupFormAvatar = document.querySelector('.popup__form_avatar')*/
 
 //popups section
 export const popupProfile = document.querySelector('.popup_profile');
