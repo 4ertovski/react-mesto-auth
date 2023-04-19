@@ -12,6 +12,8 @@ function Login({ onLogin }) {
 
     return (
         <div className="auth">
+            {/*Можно было бы сделать общий компонент AuthForm для форм авторизации,
+            чтобы не дублировать одинаковую верстку в Login и Register*/}
             <form
                 className="auth__form"
                 name="login"
